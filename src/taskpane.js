@@ -1,6 +1,6 @@
 /* global Office */
 
-const BACKEND_URL = "https://localhost:3000/api/generate-draft";
+const BACKEND_URL = "https://outlook-reply-ai-draft.onrender.com/api/generate-draft";
 
 Office.onReady((info) => {
   const btn = document.getElementById("draftBtn");

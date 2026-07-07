@@ -2,7 +2,7 @@
 
 // Point this at your backend proxy (never call OpenAI directly from here —
 // that would expose your API key to anyone who views the add-in source).
-const BACKEND_URL = "https://localhost:3000/api/generate-draft";
+const BACKEND_URL = "https://outlook-reply-ai-draft.onrender.com/api/generate-draft";
 const NOTIFICATION_KEY = "aiDraftStatus";
 
 Office.onReady(() => {
