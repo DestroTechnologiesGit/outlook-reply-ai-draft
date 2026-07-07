@@ -8,6 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: "2mb" }));
 
+
 // Serve the add-in's static front-end files (manifest points at this same origin).
 app.use(express.static(require("path").join(__dirname, "..", "src")));
 
