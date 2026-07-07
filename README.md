@@ -1,16 +1,16 @@
 # Outlook AI Draft Reply Add-in
 
 Adds a "Draft with AI" button to Outlook's reading pane. Clicking it sends the
-open email's subject/body to your own backend, which calls OpenRouter, and
+open email's subject/body to your own backend, which calls the OpenAI API, and
 opens Outlook's reply window pre-filled with the AI draft. **Nothing is sent
 automatically** — the user reviews and hits Send themselves.
 
 ## ⚠️ First: rotate your API key
 
-You pasted a live OpenRouter key in chat. Go to https://openrouter.ai/keys,
-revoke it, and generate a new one. Never put API keys directly in add-in
-front-end code (commands.js/taskpane.js) — that code is fully visible to
-anyone who inspects the add-in, so the key would be stolen instantly. This
+You pasted a live API key in chat at some point. Go to your provider's key
+dashboard, revoke it, and generate a new one. Never put API keys directly in
+add-in front-end code (commands.js/taskpane.js) — that code is fully visible
+to anyone who inspects the add-in, so the key would be stolen instantly. This
 project avoids that by keeping the key only in the backend's `.env` file.
 
 ## Project structure
@@ -25,7 +25,7 @@ outlook-ai-draft/
 │   ├── taskpane.js
 │   └── icons/              # Placeholder icons — swap these for your branding
 └── server/
-    ├── server.js           # Express proxy: Outlook add-in → this → OpenRouter
+    ├── server.js           # Express proxy: Outlook add-in → this → OpenAI
     ├── package.json
     └── .env.example
 ```
@@ -36,7 +36,7 @@ outlook-ai-draft/
 cd server
 npm install
 cp .env.example .env
-# edit .env, paste your NEW OpenRouter key into OPENROUTER_API_KEY
+# edit .env, paste your NEW OpenAI key into OPENAI_API_KEY
 ```
 
 Outlook add-ins require HTTPS, even for local testing. The easiest way to get
@@ -99,7 +99,7 @@ For real users (not just your own testing), you'll need:
    `/api/generate-draft` endpoint from one deployment).
 2. **Update every `https://localhost:3000` reference in `manifest.xml`,
    `commands.js`, and `taskpane.js`** to your real domain.
-3. **Set `OPENROUTER_API_KEY` as an environment variable** in your hosting
+3. **Set `OPENAI_API_KEY` as an environment variable** in your hosting
    provider's dashboard — never bake it into the deployed code or a Docker
    image layer.
 4. If you want this listed for other people to install (not just sideload),
@@ -117,7 +117,6 @@ send email on its own.
 
 ## Model choice
 
-Default model is `meta-llama/llama-3.1-8b-instruct:free` via OpenRouter.
-Change `OPENROUTER_MODEL` in `.env` to any other OpenRouter model ID (check
-https://openrouter.ai/models for current free-tier options — availability
-changes over time).
+Default model is `gpt-4o-mini`. Change `OPENAI_MODEL` in `.env` to any other
+OpenAI chat-completions model ID, e.g. `gpt-4o` or `gpt-4.1`, depending on
+cost/quality tradeoffs you want.

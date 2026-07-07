@@ -11,12 +11,12 @@ app.use(express.json({ limit: "2mb" }));
 // Serve the add-in's static front-end files (manifest points at this same origin).
 app.use(express.static(require("path").join(__dirname, "..", "src")));
 
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "meta-llama/llama-3.1-8b-instruct:free";
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
-if (!OPENROUTER_API_KEY) {
+if (!OPENAI_API_KEY) {
   console.warn(
-    "WARNING: OPENROUTER_API_KEY is not set. Create a .env file (see .env.example)."
+    "WARNING: OPENAI_API_KEY is not set. Create a .env file (see .env.example)."
   );
 }
 
@@ -38,28 +38,26 @@ ${body}
 
 Reply:`;
 
-    const orResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const aiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://destrotechnologies.com",
-        "X-Title": "Outlook AI Draft Add-in",
       },
       body: JSON.stringify({
-        model: OPENROUTER_MODEL,
+        model: OPENAI_MODEL,
         messages: [{ role: "user", content: prompt }],
         max_tokens: 500,
       }),
     });
 
-    if (!orResponse.ok) {
-      const errText = await orResponse.text();
-      console.error("OpenRouter error:", orResponse.status, errText);
-      return res.status(502).json({ error: `OpenRouter error: ${errText}` });
+    if (!aiResponse.ok) {
+      const errText = await aiResponse.text();
+      console.error("OpenAI error:", aiResponse.status, errText);
+      return res.status(502).json({ error: `OpenAI error: ${errText}` });
     }
 
-    const data = await orResponse.json();
+    const data = await aiResponse.json();
     const draft = data?.choices?.[0]?.message?.content || "";
 
     res.json({ draft });

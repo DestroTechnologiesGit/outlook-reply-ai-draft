@@ -1,7 +1,7 @@
 {
   "name": "outlook-ai-draft-server",
   "version": "1.0.0",
-  "description": "Backend proxy for the Outlook AI Draft add-in. Keeps the OpenRouter API key server-side.",
+  "description": "Backend proxy for the Outlook AI Draft add-in. Keeps the OpenAI API key server-side.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
