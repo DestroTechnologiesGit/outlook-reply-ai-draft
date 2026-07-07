@@ -1,0 +1,123 @@
+# Outlook AI Draft Reply Add-in
+
+Adds a "Draft with AI" button to Outlook's reading pane. Clicking it sends the
+open email's subject/body to your own backend, which calls OpenRouter, and
+opens Outlook's reply window pre-filled with the AI draft. **Nothing is sent
+automatically** — the user reviews and hits Send themselves.
+
+## ⚠️ First: rotate your API key
+
+You pasted a live OpenRouter key in chat. Go to https://openrouter.ai/keys,
+revoke it, and generate a new one. Never put API keys directly in add-in
+front-end code (commands.js/taskpane.js) — that code is fully visible to
+anyone who inspects the add-in, so the key would be stolen instantly. This
+project avoids that by keeping the key only in the backend's `.env` file.
+
+## Project structure
+
+```
+outlook-ai-draft/
+├── manifest.xml          # Add-in manifest (sideload this into Outlook)
+├── src/
+│   ├── commands.html      # Function-file host for the ribbon button
+│   ├── commands.js        # Ribbon button logic
+│   ├── taskpane.html       # Fallback UI (opens if user clicks the app icon)
+│   ├── taskpane.js
+│   └── icons/              # Placeholder icons — swap these for your branding
+└── server/
+    ├── server.js           # Express proxy: Outlook add-in → this → OpenRouter
+    ├── package.json
+    └── .env.example
+```
+
+## 1. Backend setup
+
+```bash
+cd server
+npm install
+cp .env.example .env
+# edit .env, paste your NEW OpenRouter key into OPENROUTER_API_KEY
+```
+
+Outlook add-ins require HTTPS, even for local testing. The easiest way to get
+a trusted local cert:
+
+```bash
+npx office-addin-dev-certs install
+```
+
+This installs a cert Office trusts, at `~/.office-addin-dev-certs/`. Point
+your `.env` at it:
+
+```
+SSL_CERT_PATH=/home/YOU/.office-addin-dev-certs/localhost.crt
+SSL_KEY_PATH=/home/YOU/.office-addin-dev-certs/localhost.key
+```
+
+Then run the server:
+
+```bash
+npm start
+```
+
+You should see `HTTPS server running on https://localhost:3000`. Visit
+`https://localhost:3000/taskpane.html` in a browser to confirm it loads
+without a cert warning.
+
+## 2. Sideload the add-in into Outlook
+
+**Outlook on the web / new Outlook (Windows):**
+1. Open Outlook → Settings (gear) → **Manage add-ins** → **My add-ins**
+2. Scroll to **Custom add-ins** → **Add a custom add-in** → **Add from file**
+3. Select `manifest.xml`
+4. Open any email — you'll see a **Draft with AI** button in the ribbon
+
+**Outlook Desktop (classic, Windows/Mac):**
+1. File → Manage Add-ins (or Get Add-ins → My add-ins → Add Custom Add-in →
+   From File)
+2. Select `manifest.xml`
+
+If Outlook rejects the manifest, double check the `IconUrl`,
+`AppDomain`, and `SourceLocation` URLs in `manifest.xml` all match
+where your server is actually running.
+
+## 3. Using it
+
+- Open any email
+- Click **Draft with AI**
+- A notification shows "Generating AI draft…"
+- Outlook's reply window opens, pre-filled with the AI-written reply
+- Review, edit, and send — the add-in never sends anything itself
+
+## Going to production
+
+For real users (not just your own testing), you'll need:
+
+1. **Host the front-end + backend somewhere with a real HTTPS domain**
+   (e.g. Render, Railway, Fly.io, a small VPS, or Azure App Service — the
+   `server/server.js` Express app can serve both the static files and the
+   `/api/generate-draft` endpoint from one deployment).
+2. **Update every `https://localhost:3000` reference in `manifest.xml`,
+   `commands.js`, and `taskpane.js`** to your real domain.
+3. **Set `OPENROUTER_API_KEY` as an environment variable** in your hosting
+   provider's dashboard — never bake it into the deployed code or a Docker
+   image layer.
+4. If you want this listed for other people to install (not just sideload),
+   submit it through **Microsoft AppSource** / the Microsoft 365 admin center
+   for org-wide deployment — that's a separate submission process from
+   sideloading.
+
+## Notes on "user permission"
+
+The manifest requests `<Permissions>ReadWriteMailbox</Permissions>`, which is
+what triggers Outlook's install-time consent prompt (read/write the current
+item). The add-in reads the currently open email's subject/body and opens a
+reply form — it doesn't read anything else in the mailbox, and it doesn't
+send email on its own.
+
+## Model choice
+
+Default model is `meta-llama/llama-3.1-8b-instruct:free` via OpenRouter.
+Change `OPENROUTER_MODEL` in `.env` to any other OpenRouter model ID (check
+https://openrouter.ai/models for current free-tier options — availability
+changes over time).
