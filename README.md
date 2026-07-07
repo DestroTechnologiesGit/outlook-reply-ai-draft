@@ -1,9 +1,40 @@
 # Outlook AI Draft Reply Add-in
 
 Adds a "Draft with AI" button to Outlook's reading pane. Clicking it sends the
-open email's subject/body to your own backend, which calls the OpenAI API, and
-opens Outlook's reply window pre-filled with the AI draft. **Nothing is sent
+open email's subject/body to your own backend, which retrieves relevant
+**Purlfrost knowledge-base context (RAG)** and calls the OpenAI API, then opens
+Outlook's reply window pre-filled with the AI draft. **Nothing is sent
 automatically** — the user reviews and hits Send themselves.
+
+## How RAG works here
+
+The backend does not answer from the model's memory alone. For each email it:
+
+1. Sends the email's subject + body to the **n8n "KB Search API" webhook**
+   (`/webhook/kb-search`), authenticated with a header token.
+2. That webhook embeds the text and searches the same **`purlfrost-rag` Qdrant
+   collection** used by the Purlfrost chatbot and n8n draft workflow, returning
+   the top matching KB chunks (products, prices, policies, delivery, returns).
+3. The backend injects those chunks into the draft prompt so the reply is
+   grounded in real Purlfrost content.
+
+If the KB is unset or unreachable, the backend **falls back to a plain
+(ungrounded) draft** — replies never break.
+
+### One-time n8n setup (the KB Search webhook)
+
+1. In n8n: **Workflows → Import from File** → select
+   `n8n/KB_Search_API.workflow.json` from this repo.
+2. Create a **Header Auth** credential named `KB Search Header Auth`:
+   Name = `X-KB-Token`, Value = a long random token (keep it secret).
+   Select it on the **Webhook** node.
+3. Confirm the **KB Search** node uses the `Qdrant account` credential and
+   **KB Embeddings** uses the `OpenAI account` credential (they auto-map if the
+   ids already exist; otherwise pick them).
+4. Click **Activate**. The endpoint is then live at
+   `https://<your-n8n-host>/webhook/kb-search`.
+5. Put the **same token** in the backend's `.env` as `KB_SEARCH_TOKEN`, and set
+   `KB_SEARCH_URL` to the webhook URL (see `.env.example`).
 
 ## ⚠️ First: rotate your API key
 
