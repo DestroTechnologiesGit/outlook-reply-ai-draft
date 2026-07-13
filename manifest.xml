@@ -12,12 +12,12 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="AI Draft Reply"/>
   <Description DefaultValue="Generate an AI draft reply for the open email with one click."/>
-  <IconUrl DefaultValue="https://outlook-reply-ai-draft.onrender.com/icons/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="https://outlook-reply-ai-draft.onrender.com/icons/icon-80.png"/>
+  <IconUrl DefaultValue="https://outlook-ai.srv1747149.hstgr.cloud/icons/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://outlook-ai.srv1747149.hstgr.cloud/icons/icon-80.png"/>
   <SupportUrl DefaultValue="https://destrotechnologies.com"/>
 
   <AppDomains>
-    <AppDomain>https://outlook-reply-ai-draft.onrender.com</AppDomain>
+    <AppDomain>https://outlook-ai.srv1747149.hstgr.cloud</AppDomain>
   </AppDomains>
 
   <Hosts>
@@ -33,7 +33,7 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="https://outlook-reply-ai-draft.onrender.com/taskpane.html"/>
+        <SourceLocation DefaultValue="https://outlook-ai.srv1747149.hstgr.cloud/taskpane.html"/>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -87,12 +87,12 @@
 
     <Resources>
       <bt:Images>
-        <bt:Image id="icon-16" DefaultValue="https://outlook-reply-ai-draft.onrender.com/icons/icon-16.png"/>
-        <bt:Image id="icon-32" DefaultValue="https://outlook-reply-ai-draft.onrender.com/icons/icon-32.png"/>
-        <bt:Image id="icon-80" DefaultValue="https://outlook-reply-ai-draft.onrender.com/icons/icon-80.png"/>
+        <bt:Image id="icon-16" DefaultValue="https://outlook-ai.srv1747149.hstgr.cloud/icons/icon-16.png"/>
+        <bt:Image id="icon-32" DefaultValue="https://outlook-ai.srv1747149.hstgr.cloud/icons/icon-32.png"/>
+        <bt:Image id="icon-80" DefaultValue="https://outlook-ai.srv1747149.hstgr.cloud/icons/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Commands.Url" DefaultValue="https://outlook-reply-ai-draft.onrender.com/commands.html"/>
+        <bt:Url id="Commands.Url" DefaultValue="https://outlook-ai.srv1747149.hstgr.cloud/commands.html"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GroupLabel" DefaultValue="AI Draft"/>
