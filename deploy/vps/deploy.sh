@@ -46,12 +46,11 @@ fi
 # --- secrets: prompt only on first run, kept in /opt/outlook-ai/.env ---
 if [ ! -f "$APP_DIR/.env" ]; then
   read -rp "OpenAI API key (sk-...): " OPENAI_KEY
-  read -rp "KB search token (must match the n8n 'KB Search Header Auth' credential; leave empty to run without RAG): " KB_TOKEN
   cat > "$APP_DIR/.env" <<EOF
 OPENAI_API_KEY=$OPENAI_KEY
 OPENAI_MODEL=gpt-4o-mini
+# n8n KB search webhook (no auth). Comment out to run without RAG.
 KB_SEARCH_URL=https://n8n-jp6p.srv1747149.hstgr.cloud/webhook/kb-search
-KB_SEARCH_TOKEN=$KB_TOKEN
 KB_TIMEOUT_MS=8000
 EOF
   chmod 600 "$APP_DIR/.env"

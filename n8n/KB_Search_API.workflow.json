@@ -5,7 +5,6 @@
       "parameters": {
         "httpMethod": "POST",
         "path": "kb-search",
-        "authentication": "headerAuth",
         "responseMode": "responseNode",
         "options": {}
       },
@@ -14,13 +13,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [240, 300],
-      "webhookId": "b1a10000-0000-4000-8000-0000000000aa",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "REPLACE_ON_IMPORT",
-          "name": "KB Search Header Auth"
-        }
-      }
+      "webhookId": "b1a10000-0000-4000-8000-0000000000aa"
     },
     {
       "parameters": {
