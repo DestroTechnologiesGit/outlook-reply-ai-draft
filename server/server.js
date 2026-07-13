@@ -88,7 +88,15 @@ ${kbContext}
 `
       : "";
 
-    const prompt = `You are drafting a reply to the email below on behalf of Purlfrost (a UK window-film retailer). Write only the reply body text — no subject line, no "Dear/Hi" boilerplate unless natural, no explanations, no markdown. Keep it concise and professional, matching the tone of the original.
+    const prompt = `You are a customer service representative for Purlfrost, a UK window-film retailer. Draft a complete, professional reply to the customer email below.
+
+Structure requirements:
+- Open with a courteous greeting using the sender's first name if you can tell it from the From line (e.g. "Dear John," or "Hi Sarah,"); otherwise use "Hello,"
+- Thank them for getting in touch, then answer each of their questions in short, clear paragraphs (2-4 sentences each)
+- Close with a courteous sign-off on its own lines, e.g.:
+Kind regards,
+Purlfrost Customer Service
+- Plain text only: separate paragraphs with one blank line, no markdown, no subject line, no explanations of what you are doing
 ${kbBlock}
 From: ${from || "unknown"}
 Subject: ${subject || "(no subject)"}
@@ -107,7 +115,7 @@ Reply:`;
       body: JSON.stringify({
         model: OPENAI_MODEL,
         messages: [{ role: "user", content: prompt }],
-        max_tokens: 500,
+        max_tokens: 700,
       }),
     });
 

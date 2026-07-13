@@ -36,6 +36,24 @@ function getBodyText(item) {
   });
 }
 
+// displayReplyForm treats its string as HTML, so plain-text newlines collapse.
+// Escape the draft and convert paragraphs/line breaks to real HTML.
+function draftToHtml(text) {
+  const escaped = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  const paragraphs = escaped
+    .split(/\n{2,}/)
+    .map((p) => "<p>" + p.trim().replace(/\n/g, "<br>") + "</p>")
+    .join("");
+  return (
+    '<div style="font-family: Calibri, Arial, sans-serif; font-size: 11pt;">' +
+    paragraphs +
+    "</div>"
+  );
+}
+
 async function generateDraft(event) {
   const item = Office.context.mailbox.item;
 
@@ -71,7 +89,7 @@ async function generateDraft(event) {
 
     // Opens Outlook's native reply window, pre-filled with the AI draft.
     // The user still reviews and hits Send themselves — nothing is sent automatically.
-    item.displayReplyForm(draftText);
+    item.displayReplyForm({ htmlBody: draftToHtml(draftText) });
 
     showNotification(item, "AI draft inserted into reply.", false);
   } catch (err) {

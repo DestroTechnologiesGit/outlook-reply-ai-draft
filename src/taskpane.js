@@ -32,6 +32,24 @@ function getBodyText(item) {
   });
 }
 
+// displayReplyForm treats its string as HTML, so plain-text newlines collapse.
+// Escape the draft and convert paragraphs/line breaks to real HTML.
+function draftToHtml(text) {
+  const escaped = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  const paragraphs = escaped
+    .split(/\n{2,}/)
+    .map((p) => "<p>" + p.trim().replace(/\n/g, "<br>") + "</p>")
+    .join("");
+  return (
+    '<div style="font-family: Calibri, Arial, sans-serif; font-size: 11pt;">' +
+    paragraphs +
+    "</div>"
+  );
+}
+
 async function handleClick() {
   const btn = document.getElementById("draftBtn");
   const item = Office.context.mailbox.item;
@@ -59,7 +77,7 @@ async function handleClick() {
     const draftText = (data.draft || "").trim();
     if (!draftText) throw new Error("No draft text returned.");
 
-    item.displayReplyForm(draftText);
+    item.displayReplyForm({ htmlBody: draftToHtml(draftText) });
     setStatus("Draft inserted into reply window.");
   } catch (err) {
     console.error(err);
